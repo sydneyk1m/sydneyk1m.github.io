@@ -29,16 +29,42 @@
     
     </head>
 <body>
+    <!-- overlay for mobile -->
+     <div id="overlay">
+        <div>
+            <i class="fa fa-times" title="button to close mobile navigation"></i>
+        </div>
+        <div class ="overlay-text" style="text-align: center;">
+            <a href="index.html">homepage</a>
+            <a href="menu.html">menu</a>
+            <a href="about.html">about</a>
+            <a href="videos.html" class="videos-nav">videos</a>
+        </div>
+
+     </div>
     <header>
+        <!-- tablets/desktop devices -->
         <nav class="nav full-nav">
-            <div style="text-align: center;">
+            <div>
                 <img src="images/sydlogo.png" alt="sydneylogo" style="width:10%;">
             </div>
-            <div style="text-align: center;">
+            <div">
                 <a href="index.html">homepage</a>
                 <a href="menu.html">menu</a>
                 <a href="about.html">about</a>
+                <a href="videos.html" class="videos-nav">videos</a>
             </div>
+        </nav>
+
+        <!-- mobile devices -->
+        <nav class="nav mobile-nav">
+            <div>
+                <img src="images/sydlogo.png" alt="sydneylogo" style="width:10%;">
+            </div>
+            <div>
+                <i class="fa-solid fa-bars-staggered" title="button to open navigation options"></i>
+            </div>
+
         </nav>
     </header>
 <h1>welcome to sydsite!</h1>

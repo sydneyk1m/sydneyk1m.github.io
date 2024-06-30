@@ -32,7 +32,7 @@
     <!-- overlay for mobile -->
      <div id="overlay">
         <div>
-            <i class="fa fa-times" title="button to close mobile navigation"></i>
+            <i class="fa fa-times" title="button to close mobile navigation" onclick="off()"></i>
         </div>
         <div class ="overlay-text" style="text-align: center;">
             <a href="index.html">homepage</a>
@@ -59,10 +59,10 @@
         <!-- mobile devices -->
         <nav class="nav mobile-nav">
             <div>
-                <img src="images/sydlogo.png" alt="sydneylogo" style="width:10%;">
+                <img src="images/sydlogo.png" alt="sydneylogo" style="width:8%;">
             </div>
             <div>
-                <i class="fa-solid fa-bars-staggered" title="button to open navigation options"></i>
+                <i class="fa-solid fa-bars-staggered" title="button to open navigation options" onclick="on()"></i>
             </div>
 
         </nav>
@@ -72,6 +72,6 @@ Content goes here.
 </body>
 
 <!-- connects our js and html files together -->
-<script src="app.js"></script>
+<script src="scripts/sydapp.js" defer></script>
 
 </html>

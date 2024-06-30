@@ -4,7 +4,7 @@
 }
 
 body {
-    background-color: white;
+    background-color: aliceblue;
     /* so everything takes up the full width of our screen */
     margin: 0;
     padding: 0; 
@@ -22,7 +22,7 @@ h1 {
 }
 
 .nav {
-    background-color: white;
+    background-color: aliceblue;
     color: pink;
     display: flex;
     justify-content: space-between;

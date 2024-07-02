@@ -16,3 +16,19 @@ function off() {
     const overflow = document.querySelector("body");
     overflow.style.overflow = "";
 }
+
+// rice site redirect button
+
+const riceButton = document.getElementById('riceButton');
+
+// Add an event listener to the button
+riceButton.addEventListener('click', function() {
+    // Redirect to the desired website
+    window.location.href = 'https://www.rice.edu';
+});
+
+{/* <script type="text/javascript">
+    document.getElementById("riceButton").onclick = function () {
+        location.href = "https://www.rice.edu/"
+    };
+</script> */}

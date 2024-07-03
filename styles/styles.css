@@ -276,11 +276,32 @@ h1 {
     width: 35%;
     color: #fff;
     background-color: #00205B;
+    border-radius: 4rem;
+    border: none;
+    padding: .5rem 0;
+    cursor: pointer;
+    margin: .25rem
+}
+
+.rice-site-redirect:hover {
+    box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.5);
+  }
+
+.buffalo-bills-redirect {
+    font-size: .9rem;
+    font-weight: bold;
+    width: 35%;
+    color: #fff;
+    background-color: #002174;
     border-radius: 3rem;
     border: none;
     padding: .5rem 0;
     cursor: pointer;
     margin: .25rem
+}
+
+.buffalo-bills-redirect:hover {
+    box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.5);
 }
 
 @media (max-width: 768px) {

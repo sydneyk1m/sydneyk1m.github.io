@@ -27,8 +27,12 @@ riceButton.addEventListener('click', function() {
     window.location.href = 'https://www.rice.edu';
 });
 
-{/* <script type="text/javascript">
-    document.getElementById("riceButton").onclick = function () {
-        location.href = "https://www.rice.edu/"
-    };
-</script> */}
+// bills redirect button
+
+const buffaloButton = document.getElementById('buffaloButton');
+
+// Add an event listener to the button
+buffaloButton.addEventListener('click', function() {
+    // Redirect to the desired website
+    window.location.href = 'https://www.buffalobills.com/';
+});

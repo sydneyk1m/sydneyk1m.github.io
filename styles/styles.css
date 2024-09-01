@@ -45,7 +45,7 @@ h1 {
 }
 
 /* this targets the fourth element (the one that will look like a button?) videos i guess */
-.nav div:nth-child(2) a:nth-child(-n+3) {
+.nav div:nth-child(2) a:nth-child(-n+4) {
     color: skyblue;
     text-decoration: none;
     padding: 0 1rem;
@@ -68,7 +68,8 @@ h1 {
     text-decoration: none;
 } */
 
-.videos-nav2 {
+/* This is for the videos button I don't want to use anymore lol */
+/* .videos-nav2 {
     align-self: center;
     background-color: #fff;
     background-image: none;
@@ -106,7 +107,8 @@ h1 {
 .videos-nav2:focus {
   box-shadow: rgba(0, 0, 0, .3) 2px 8px 4px -6px;
   transform: translate3d(0, 2px, 0);
-}
+} */
+/* videos button ends */
 
 /* only run on media up from 800px */
 @media (min-width: 801px) {
@@ -231,8 +233,8 @@ h1 {
 /* blue spacer */
 .blue-spacer {
     width: 100%;
-    height: 2.5rem;
-    background-color:azure;
+    height: 3rem;
+    background-color:rgba(159, 189, 255, 0.467);
 }
 
 /* grid elements */
@@ -304,6 +306,23 @@ h1 {
     box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.5);
 }
 
+.photos-redirect {
+    font-size: .9rem;
+    font-weight: bold;
+    width: 35%;
+    color: #fff;
+    background-color: #002174;
+    border-radius: 3rem;
+    border: none;
+    padding: .5rem 0;
+    cursor: pointer;
+    margin: .25rem
+}
+
+.photos-redirect:hover {
+    box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.5);
+}
+
 @media (max-width: 768px) {
     .syd-grid {
         grid-template-columns: repeat(1, 1fr);
@@ -313,4 +332,37 @@ h1 {
         width: 30%;
         margin: auto;
     }
+}
+
+/* footer */
+footer {
+    background-color: aliceblue;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+    padding: 1rem;
+    color: aliceblue;
+
+}
+
+footer div:nth-child(2) {
+    text-align: center;
+}
+
+footer div:nth-child(2) div:nth-child(1) {
+    display:flex;
+    justify-content: center;
+}
+
+footer div:nth-child(2) div:nth-child(1) a {
+    text-decoration: none;
+    color: blue;
+}
+
+footer div:nth-child(3) {
+    text-align: right;
+}
+
+footer div:nth-child(1) img, footer div:nth-child(3) {
+    padding: .5rem;
 }

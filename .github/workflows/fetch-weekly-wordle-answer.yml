@@ -1,0 +1,27 @@
+name: fetch daily wordle answer
+# a workflow file that fetches the daily wordle answer from the new york times. it's an unofficial api so it may be deprecated in the future.
+on:
+  schedule:
+    # runs every mondayat 6:25am UTC --> 12:25am cst --> 1:25am est
+    - cron: '25 6 * * 1'
+  workflow_dispatch: {}   # allows manual trigger from github actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  update-answer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: fetch a week's worth of nyt wordle answers (assuming they are always a week out)
+        run: python3 .github/scripts/fetch_wordle_week.py
+
+      - name: Commit and push if the answers changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add wordletimer/answers-week.json
+          git diff --staged --quiet || git commit -m "Update weekly Wordle answers"
+          git push

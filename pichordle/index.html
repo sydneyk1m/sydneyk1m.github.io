@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>pichondle</title>
+<title>pichordle</title>
 <style>
   :root {
     --bg: #ffffff;
@@ -253,19 +253,14 @@
 <body>
 <div class="app">
   <header>
-    <p class="eyebrow"></p>
-    <h1>pichondle</h1>
-    <p class="tagline">automatically timed wordle for the daikin data team.</p>
+    <!-- <p class="eyebrow">an automatically timed wordle for the daikin data team.</p> -->
+    <h1>pichordle</h1>
+    <p class="tagline">an automatically timed wordle for the daikin data team.</p>
   </header>
 
   <div class="mode-row">
     <span id="modeLabel">Loading word lists…</span>
     <span class="mode-badge" id="dayBadge"></span>
-  </div>
-
-  <div class="timer-wrap">
-    <div class="timer-dot" id="timerDot"></div>
-    <div class="timer" id="timer">00:00.000</div>
   </div>
 
   <div class="board" id="board"></div>
@@ -274,9 +269,14 @@
 
   <div class="keyboard" id="keyboard"></div>
 
+  <div class="timer-wrap">
+    <div class="timer-dot" id="timerDot"></div>
+    <div class="timer" id="timer">00:00.000</div>
+  </div>
+
   <div class="controls">
     <button class="new-word-btn" id="practiceBtn" disabled>practice word</button>
-    <span id="bestTime">Best: —</span>
+    <span id="bestTime">best: —</span>
   </div>
 </div>
 
@@ -380,7 +380,7 @@
   // a weekly triggered GitHub Action fetches 7 days of real NYT solutions server-side
   // (avoiding CORS) and commits them here as a { "YYYY-MM-DD": "WORD" } map.
   // https://www.nytimes.com/svc/wordle/v2/YYYY-MM-DD.json is the (unofficial) source.
-  const WEEKLY_ANSWERS_URL = "answers-week.json";
+  const WEEKLY_ANSWERS_URL = "week-answers.json";
 
   async function getDailyAnswer() {
     try {

@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: fetch a week's worth of nyt wordle answers (assuming they are always a week out)
-        run: python3 .github/scripts/fetch_wordle_week.py
+        run: python3 .github/scripts/fetch-weekly-wordle-answers.py
 
       - name: Commit and push if the answers changed
         run: |

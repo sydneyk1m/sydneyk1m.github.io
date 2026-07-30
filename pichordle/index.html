@@ -215,7 +215,7 @@
 
   .key {
     font-family: var(--sansserif); font-weight: 505; font-size: 20px;
-    background: #787c7e; color: var(--ink);
+    background: #d4d6da; color: var(--ink);
     border: none; border-radius: 5px;
     height: 54px; flex: 0 0 40px;
     display: flex; align-items: center; justify-content: center;
@@ -225,10 +225,63 @@
   .key:active { transform: scale(0.94); }
   .key:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .key.wide { flex: 0 0 54px; font-size: 11px; }
-  .key.correct { background: var(--green); color: #14170F; }
-  .key.present { background: var(--yellow); color: #14170F; }
-  .key.absent  { background: #d4d6da; color: var(--white); }
+  .key.correct { background: var(--green); color: var(--white); }
+  .key.present { background: var(--yellow); color: var(--white); }
+  .key.absent  { background: #787c7e; color: var(--white); }
   .key:disabled { opacity: 0.4; cursor: default; }
+
+  /* Popup container */
+.popup {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* The actual popup (appears on top) */
+.popup .popuptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -80px;
+}
+
+/* Popup arrow */
+.popup .popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+}
 
   .controls {
     display: flex; align-items: center; gap: 14px;
@@ -278,6 +331,10 @@
     <div class="timer" id="timer">00:00.000</div>
   </div>
 
+  <div class="popup" onclick="myFunction()">POP UP~
+    <span class="popuptext" id="myPopup">POPCHONKUN!</span>
+  </div>
+
   <div class="controls">
     <button class="new-word-btn" id="practiceBtn" disabled>break the game with this button</button>
     <span id="bestTime">best: —</span>
@@ -285,6 +342,13 @@
 </div>
 
 <script>
+
+// clicky click popup.
+function myFunction() {
+  var popup = document.getElementById("myPopup");
+  popup.classList.toggle("show");
+}
+
 (function () {
   // ---------------------------- word list sources ----------------------------------
   // in production, hosting these two newline-separated .txt files next to this

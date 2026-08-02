@@ -1,5 +1,5 @@
 # sydney.kim
-www.sydney.kim is a website. what else is there to say?
+https://sydney.kim is a website. what else is there to say?
 
 ## pichordle
 pichordle is a simple html/css-based wordle clone that implements an automatic timer. the timer starts when you type your first letter and ends when the last letter of your correct answer flips to green (or if you flop, whenever your flop answer flops to gray/yellow).

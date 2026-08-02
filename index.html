@@ -1,66 +1,243 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>sydney kim</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sydney kim</title>
+<link rel="icon" href="images/smallersydlogo.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Spline+Sans+Mono:ital,wght@0,300..700;1,300..700&family=Winky+Sans:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #191A17;
+    --panel: #1F2119;
+    --ink: #E9E6DC;
+    --ink-dim: #918D7F;
+    --green: #4F7942;
+    --teal: #6FA69C;
+    --line: #33352C;
+  }
+  *{ box-sizing: border-box; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Spline Sans Mono', monospace;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  a{ color: var(--green); text-decoration: none; }
+  a:hover{ text-decoration: underline; }
+  a:focus-visible, button:focus-visible{ outline: 2px solid var(--green); outline-offset: 3px; }
 
-  <link rel="icon" href="images/smallersydlogo.png" />
+  .shell{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
 
-  <style>
-    html {
-      display: flex;
-      height: 100vh;
-      justify-content: center;
-      align-items: center;
-    }
+  /* Fake window chrome */
+  .titlebar{
+    display:flex; align-items:center; gap:8px;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+  }
+  .dot{ width:10px; height:10px; border-radius:50%; }
+  .dot.r{ background:#E0645A; }
+  .dot.y{ background:#E0B23D; }
+  .dot.g{ background:#6FA669; }
+  .titlebar span.mono{
+    margin-left: 10px;
+    font-size: 0.75rem;
+    color: var(--ink-dim);
+  }
 
-    body {
-      font-family: 'Spline Sans Mono', monospace;
-      background-color: #3e3d3d;
-      max-width: 84ch;
-      width: 84ch;
-      padding: 0 2ch;
-      color: #ccc;
-      overflow: hidden;
-    }
+  .tabs{
+    display:flex;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-top: none;
+    font-size: 0.8rem;
+  }
+  .tab{
+    padding: 10px 18px;
+    color: var(--ink-dim);
+    cursor: pointer;
+    border-right: 1px solid var(--line);
+    background: transparent;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .tab.active{ background: var(--bg); color: var(--green); }
+  .tab:hover{ color: var(--ink); }
 
-    a:visited {
-      color: #999;
-    }
+  .terminal{
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 0 0 8px 8px;
+    padding: 32px 28px 36px;
+    min-height: 340px;
+  }
 
-    a {
-      color: #ccc;
-    }
+  .prompt{ color: var(--teal); }
+  .prompt::before{ content: "$ "; color: var(--ink-dim); }
 
-    ul {
-      list-style-type: "ᄯ ";
-    }
-  </style>
+  #typed{ white-space: pre-wrap; }
+  .cursor{
+    display:inline-block;
+    width: 6px; height: 1.1em;
+    background: var(--green);
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+  }
+  @keyframes blink{ 50%{ opacity: 0; } }
+
+  h1.name{
+    font-family: 'Spline Sans Mono', sans-serif;
+    font-weight: 550;
+    font-size: clamp(2.1rem, 5vw, 3.1rem);
+    color: var(--ink);
+    margin: 4px 0 4px;
+    line-height: 1;
+  }
+  .role{
+    color: var(--ink-dim);
+    font-size: 0.95rem;
+    margin: 0 0 28px;
+  }
+  .role .green{ color: var(--green); }
+
+  section.panel-section{ display:none; }
+  section.panel-section.active{ display:block; }
+
+  p{ color: var(--ink); margin: 0 0 14px; font-size: 0.95rem; }
+  .comment{ color: var(--ink-dim); }
+  .comment::before{ content: "// "; }
+
+  .work-block{
+    border-left: 2px solid var(--line);
+    padding-left: 16px;
+    margin: 22px 0;
+  }
+  .work-block .path{ color: var(--teal); font-size: 0.85rem; }
+  .work-block .desc{ color: var(--ink-dim); font-size: 0.88rem; margin: 4px 0 8px; }
+  .work-block a{ font-size: 0.85rem; }
+
+  .field{
+    display:flex; gap: 10px; margin-bottom: 10px; font-size: 0.9rem;
+  }
+  .field .key{ color: var(--teal); width: 90px; flex-shrink:0; }
+  .field .val a{ color: var(--green); }
+
+  footer{
+    max-width: 760px;
+    margin: 24px auto 0;
+    padding: 0 24px;
+    color: var(--ink-dim);
+    font-size: 0.75rem;
+  }
+
+  @media (max-width: 560px){
+    .shell{ padding: 28px 14px 60px; }
+    .tab{ padding: 10px 12px; }
+    .terminal{ padding: 24px 18px 28px; }
+  }
+</style>
 </head>
-
 <body>
-  <h1>welcome to sydney.kim</h1>
-  <p>i'm sydney kim and i own this website.</p>
-  <p>
-    <a href="/about">about</a>
-    <!-- <a href="/experience">experience</a> -->
-  </p>
+<div class="shell">
 
-  <br>
-  
-  <p>links:</p>
-  <ul>
-    <li><a href="/pichordle">pichordle</a></li>
-    <li><a rel="noreferrer" href="https://www.linkedin.com/in/sydneyk1m/">linkedin</a></li>
-  </ul>
+  <div class="titlebar">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    <span class="mono">sydney@kim: ~/site</span>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Site sections">
+    <button class="tab active" data-tab="about" role="tab" aria-selected="true">about.syd</button>
+    <button class="tab" data-tab="work" role="tab" aria-selected="false">work.syd</button>
+    <button class="tab" data-tab="contact" role="tab" aria-selected="false">contact.syd</button>
+  </div>
+
+  <div class="terminal">
+    <div class="prompt">whoami</div>
+    <p id="typed"><span class="cursor"></span></p>
+
+    <section class="panel-section active" data-panel="about">
+      <p class="comment">data engineer ; working with python, java, SQL.</p>
+      <p>rice university alum (martel '24) who works in the data space. currently interested in leveraging my skills to contribute to volunteer data projects.</p>
+      <p>in my free time: ich übe deutsch, follow the oscars death race, and contribute to wikimedia.</p>
+      <p class="comment">based in houston, tx ; san francisco, ca</p>
+    </section>
+
+    <section class="panel-section" data-panel="work">
+      <p class="comment">featured projects - coding and writing. message me to ask about current work!</p>
+      <div class="work-block">
+        <div class="path">~/work/pichordle-july-2026</div>
+        <div class="desc">a small html/css-based wordle clone that syncs with the daily answer and times you automatically. try it out and let me know if there are bugs!</div>
+        <a href="/pichordle">→ sydney.kim/pichordle</a>
+      </div>
+      <div class="work-block">
+        <div class="path">~/work/crash-alert-march-2025</div>
+        <div class="desc">full-stack RESTful spring boot react web app w/ crud user mgmt. utilizing tomtom traffic api w/restclient to request real-time accident info from a city of choice; optional e-mail alert functionality.</div>
+        <a href="https://github.com/sydneyk1m/crashalert">→ github.com/sydneyk1m/crashalert</a>
+      </div>
+      <div class="work-block">
+        <div class="path">~/work/my-senior-thesis-2024</div>
+        <div class="desc">titled 'the transformations of lewis mumford: prophecy, utopia, and the young radicals of the 20th century'. intervened in the scholarly space discussing our last great humanist, lewis mumford, and his dismissive relationship with the new left as a case study for the deterioration of his luminary utopic worldview. reach out if you care!</div>
+        <a href="/documents/you-got-honors.pdf">→ you-got-honors.pdf</a>
+      </div>
+    </section>
+
+    <section class="panel-section" data-panel="contact">
+      <p class="comment">open to volunteer/work opportunities and academic </p>
+      <div class="field"><span class="key">email</span><span class="val"><a href="mailto:sydneykim@alumni.rice.edu">sydneykim@alumni.rice.edu</a></span></div>
+      <div class="field"><span class="key">github</span><span class="val"><a href="https://github.com/sydneyk1m">github.com/sydneyk1m</a></span></div>
+      <div class="field"><span class="key">linkedin</span><span class="val"><a href="https://www.linkedin.com/in/sydneyk1m/">linkedin.com/sydneyk1m</a></span></div>
+      <!-- <div class="field"><span class="key">status</span><span class="val">something else</span></div> -->
+    </section>
+  </div>
+
+  <!-- <h1 class="name">sydney kim</h1> -->
+  <!-- <p class="role"><span class="green"></span></p> -->
+
+  <footer>© 2026 sydney kim</footer>
+</div>
+
+<script>
+  // typed-type intro
+  const line = "i'm sydney, nice to meet you!";
+  const el = document.getElementById('typed');
+  let i = 0;
+  function type(){
+    if(i <= line.length){
+      el.innerHTML = line.slice(0, i) + '<span class="cursor"></span>';
+      i++;
+      setTimeout(type, 28);
+    }
+  }
+  type();
+
+  // tab logic
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.panel-section');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected','true');
+      document.querySelector(`.panel-section[data-panel="${tab.dataset.tab}"]`).classList.add('active');
+    });
+  });
+
+  // adjust for reduced motion option
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.innerHTML = line;
+    document.querySelectorAll('.cursor').forEach(c => c.style.animation = 'none');
+  }
+</script>
 </body>
-
 </html>

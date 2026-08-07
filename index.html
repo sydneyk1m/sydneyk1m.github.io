@@ -60,6 +60,7 @@
     background: var(--panel);
     border: 1px solid var(--line);
     border-top: none;
+    border-right: 1px solid var(--line);
     font-size: 0.8rem;
   }
   .tab{
@@ -69,6 +70,9 @@
     border-right: 1px solid var(--line);
     background: transparent;
     transition: background 0.15s ease, color 0.15s ease;
+  }
+  .tab:last-child{
+    border-right: none;
   }
   .tab.active{ background: var(--bg); color: var(--green); }
   .tab:hover{ color: var(--ink); }
@@ -158,7 +162,7 @@
   <div class="tabs" role="tablist" aria-label="Site sections">
     <button class="tab active" data-tab="about" role="tab" aria-selected="true">about.syd</button>
     <button class="tab" data-tab="work" role="tab" aria-selected="false">work.syd</button>
-    <button class="tab" data-tab="contact" role="tab" aria-selected="false">contact.syd</button>
+    <button class="tab " data-tab="contact" role="tab" aria-selected="false">contact.syd</button>
   </div>
 
   <div class="terminal">
@@ -167,13 +171,13 @@
 
     <section class="panel-section active" data-panel="about">
       <p class="comment">data engineer ; working with python, java, SQL.</p>
-      <p>rice university alum (martel '24) who works in the data space. currently interested in leveraging my skills to contribute to volunteer data projects.</p>
+      <p>rice university alum (martel '24). interested in contributing to volunteer data/software-related projects!</p>
       <p>in my free time: ich lerne deutsch, follow the oscars death race, and contribute to wikimedia.</p>
       <p class="comment">based in houston, tx ; san francisco, ca</p>
     </section>
 
     <section class="panel-section" data-panel="work">
-      <p class="comment">featured projects - coding and writing. message me to ask about current work!</p>
+      <p class="comment">featured projects - coding and writing. reach out to ask about current work!</p>
       <div class="work-block">
         <div class="path">~/work/pichordle-july-2026</div>
         <div class="desc">a small html/css-based wordle clone that syncs with the daily answer and times you automatically. try it out and let me know if there are bugs!</div>
@@ -181,12 +185,12 @@
       </div>
       <div class="work-block">
         <div class="path">~/work/crash-alert-march-2025</div>
-        <div class="desc">full-stack RESTful spring boot react web app w/ crud user mgmt. utilizing tomtom traffic api w/restclient to request real-time accident info from a city of choice; optional e-mail alert functionality.</div>
+        <div class="desc">team-based full-stack RESTful spring boot react web app w/ crud user mgmt. utilizing tomtom traffic api w/restclient to request real-time accident info from a city of choice; optional e-mail alert functionality.</div>
         <a href="https://github.com/sydneyk1m/crashalert">→ github.com/sydneyk1m/crashalert</a>
       </div>
       <div class="work-block">
         <div class="path">~/work/my-senior-thesis-2024</div>
-        <div class="desc">titled 'the transformations of lewis mumford: prophecy, utopia, and the young radicals of the 20th century'. intervened in the scholarly space discussing our last great humanist, lewis mumford, and his dismissive relationship with the new left as a case study for the deterioration of his seminal utopic worldview. reach out if you care!</div>
+        <div class="desc">titled 'the transformations of lewis mumford: prophecy, utopia, and the young radicals of the 20th century'. intervened in the scholarly space discussing our last great humanist, lewis mumford, and his dismissive relationship with the new left as a case study for the deterioration of his seminal utopic worldview. anyways, reach out if you care!</div>
         <a href="/documents/you-got-honors.pdf">→ you-got-honors.pdf</a>
       </div>
     </section>
@@ -194,8 +198,8 @@
     <section class="panel-section" data-panel="contact">
       <p class="comment">open to volunteer/work opportunities and academic discussions!</p>
       <div class="field"><span class="key">email</span><span class="val"><a href="mailto:sydneykim@alumni.rice.edu">sydneykim@alumni.rice.edu</a></span></div>
-      <div class="field"><span class="key">github</span><span class="val"><a href="https://github.com/sydneyk1m">github.com/sydneyk1m</a></span></div>
       <div class="field"><span class="key">linkedin</span><span class="val"><a href="https://www.linkedin.com/in/sydneyk1m/">linkedin.com/sydneyk1m</a></span></div>
+      <div class="field"><span class="key">github</span><span class="val"><a href="https://github.com/sydneyk1m">github.com/sydneyk1m</a></span></div>
       <!-- <div class="field"><span class="key">status</span><span class="val">something else</span></div> -->
     </section>
   </div>

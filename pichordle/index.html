@@ -331,9 +331,9 @@
     <div class="timer" id="timer">00:00.000</div>
   </div>
 
-  <div class="popup" onclick="myFunction()">POP UP~
+  <!-- <div class="popup" onclick="myFunction()">POP UP~
     <span class="popuptext" id="myPopup">POPCHONKUN!</span>
-  </div>
+  </div> -->
 
   <div class="controls">
     <button class="new-word-btn" id="practiceBtn" disabled>break the game with this button</button>
@@ -625,8 +625,9 @@ function myFunction() {
 
       setTimeout(() => {
         const letter = tile.letter;
+        const rank = { absent: 0, present: 1, correct: 2 };
         const current = keyStatus[letter];
-        if (current !== "correct") keyStatus[letter] = result[i] === "present" && current === "correct" ? current : result[i];
+        if (!current || rank[result[i]] > rank[current]) keyStatus[letter] = result[i];
         refreshKeyboardColors();
       }, i * 300 + 280);
 

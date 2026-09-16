@@ -106,46 +106,36 @@
   .timer-wrap {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
     background: var(--panel);
     border: 1px solid var(--tile-border);
-    border-radius: 10px;
-    padding: 14px 22px;
+    border-radius: 8px;
+    padding: 8px 14px;
     box-shadow: inset 0 1px 0 rgba(214, 216, 220, 0.03), 0 8px 24px rgba(214, 216, 220, .35);
   }
 
   .timer {
     font-family: var(--sansserif);
-    font-size: 34px;
+    font-size: 22px;
     font-weight: 700;
     letter-spacing: 0.04em;
     font-variant-numeric: tabular-nums;
     color: var(--gray);
     transition: color 0.15s ease, text-shadow 0.15s ease;
-    min-width: 9ch;
+    min-width: 7ch;
     text-align: center;
   }
 
   .timer.running { color: var(--white); text-shadow: 0 0 14px rgba(214, 216, 220, .35); }
   .timer.locked { animation: lockFlash 0.4s ease; }
+  .timer.copyable { cursor: pointer; }
+  .timer.copyable:hover { text-decoration: underline; text-underline-offset: 5px; }
 
   @keyframes lockFlash {
     0% { color: var(--ink); text-shadow: none; }
     35% { color: var(--bg); background: var(--accent); }
     100% { color: var(--ink); text-shadow: none; }
   }
-
-  .timer-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--tile-border);
-    transition: background 0.2s ease, box-shadow 0.2s ease;
-  }
-  .timer-dot.live {
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-    animation: pulse 1s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 
   .board { display: grid; grid-template-rows: repeat(6, 1fr); gap: 6px; }
   .row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
@@ -283,20 +273,6 @@
   to {opacity:1 ;}
 }
 
-  .controls {
-    display: flex; align-items: center; gap: 14px;
-    font-size: 12px; color: var(--ink-dim); font-family: var(--sansserif);
-  }
-
-  .new-word-btn {
-    font-family: var(--sansserif); font-weight: 600; font-size: 13px;
-    background: transparent; border: 1px solid var(--tile-border); color: var(--ink);
-    padding: 9px 16px; border-radius: 7px; cursor: pointer;
-    transition: border-color 0.15s ease, background 0.15s ease;
-  }
-  .new-word-btn:hover { border-color: var(--accent); }
-  .new-word-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .new-word-btn:disabled { opacity: 0.4; cursor: default; }
 
   @media (max-width: 380px) {
     .tile { width: 15vw; height: 15vw; font-size: 6vw; }
@@ -327,7 +303,6 @@
   <div class="keyboard" id="keyboard"></div>
 
   <div class="timer-wrap">
-    <div class="timer-dot" id="timerDot"></div>
     <div class="timer" id="timer">00:00.000</div>
   </div>
 
@@ -335,10 +310,6 @@
     <span class="popuptext" id="myPopup">POPCHONKUN!</span>
   </div> -->
 
-  <div class="controls">
-    <button class="new-word-btn" id="practiceBtn" disabled>break the game with this button</button>
-    <span id="bestTime">best: —</span>
-  </div>
 </div>
 
 <script>
@@ -354,7 +325,7 @@ function myFunction() {
   // in production, hosting these two newline-separated .txt files next to this
   // page will allow the fetches below to automatically pick them up:
   //   valid-wordle-words.txt  -> every guess players are allowed to submit
-  //   wordle-answers.txt      -> the smaller pool that daily/practice answer is drawn from. might remove practice later
+  //   wordle-answers.txt      -> the smaller pool that the daily answer is drawn from
   const GUESS_LIST_URL = "valid-wordle-words.txt";
   const ANSWER_LIST_URL = "wordle-answers.txt";
 
@@ -390,9 +361,9 @@ function myFunction() {
   let animating = false;
   let startTime = null;
   let rafId = null;
-  let bestTimeMs = null;
-  let isDailyMode = true;
   let guessHistory = [];
+  let finalTimeText = null;
+  let copyRevertTimeout = null;
   const keyStatus = {};
 
   // ---------------------------- persistence (per-browser, not per-person) ----------------------------
@@ -438,9 +409,6 @@ function myFunction() {
   const keyboardEl = document.getElementById("keyboard");
   const messageEl = document.getElementById("message");
   const timerEl = document.getElementById("timer");
-  const timerDotEl = document.getElementById("timerDot");
-  const bestTimeEl = document.getElementById("bestTime");
-  const practiceBtn = document.getElementById("practiceBtn");
   const modeLabel = document.getElementById("modeLabel");
   const dayBadge = document.getElementById("dayBadge");
 
@@ -509,12 +477,6 @@ function myFunction() {
     }
   }
 
-  function getPracticeAnswer() {
-    let word;
-    do { word = ANSWERS[Math.floor(Math.random() * ANSWERS.length)]; } while (word === target && ANSWERS.length > 1);
-    return word;
-  }
-
   function formatTime(ms) {
     const m = Math.floor(ms / 60000);
     const s = Math.floor((ms % 60000) / 1000);
@@ -577,7 +539,6 @@ function myFunction() {
     if (startTime !== null || gameOver) return;
     startTime = performance.now();
     timerEl.classList.add("running");
-    timerDotEl.classList.add("live");
     tick();
   }
 
@@ -591,12 +552,23 @@ function myFunction() {
     if (rafId !== null) cancelAnimationFrame(rafId);
     rafId = null;
     timerEl.classList.remove("running");
-    timerDotEl.classList.remove("live");
     const elapsed = performance.now() - startTime;
     timerEl.textContent = formatTime(elapsed);
     timerEl.classList.add("locked");
     setTimeout(() => timerEl.classList.remove("locked"), 400);
     return elapsed;
+  }
+
+  function copyTimerText() {
+    if (!gameOver || !finalTimeText || !navigator.clipboard || !navigator.clipboard.writeText) return;
+    navigator.clipboard.writeText(finalTimeText).then(() => {
+      clearTimeout(copyRevertTimeout);
+      timerEl.textContent = "copied";
+      timerEl.classList.remove("locked");
+      void timerEl.offsetWidth; // restart animation
+      timerEl.classList.add("locked");
+      copyRevertTimeout = setTimeout(() => { timerEl.textContent = finalTimeText; }, 700);
+    }).catch(() => {}); // clipboard blocked/denied; fail silently
   }
 
   function setMessage(text, kind) {
@@ -681,25 +653,21 @@ function myFunction() {
             const elapsed = stopTimer();
             gameOver = true;
             setKeyboardDisabled(true);
+            finalTimeText = formatTime(elapsed);
+            timerEl.classList.add("copyable");
+            timerEl.title = "click to copy your time";
             if (isWin) {
-              if (bestTimeMs === null || elapsed < bestTimeMs) {
-                bestTimeMs = elapsed;
-                bestTimeEl.textContent = `best: ${formatTime(bestTimeMs)}`;
-              }
               setMessage(`Solved in ${formatTime(elapsed)}.`, "win");
             } else {
               setMessage(`too bad; today's word was ${target} — ${formatTime(elapsed)}.`, "lose");
             }
-            if (isDailyMode) {
-              practiceBtn.disabled = false;
-              saveDailyResult({
-                date: todayDateStr(),
-                word: target,
-                guesses: guessHistory.slice(),
-                isWin,
-                elapsedMs: elapsed
-              });
-            }
+            saveDailyResult({
+              date: todayDateStr(),
+              word: target,
+              guesses: guessHistory.slice(),
+              isWin,
+              elapsedMs: elapsed
+            });
           } else {
             currentRow++;
             currentCol = 0;
@@ -736,25 +704,25 @@ function myFunction() {
     animating = false;
     startTime = null;
     guessHistory = [];
+    finalTimeText = null;
+    clearTimeout(copyRevertTimeout);
     if (rafId !== null) cancelAnimationFrame(rafId);
     rafId = null;
     for (const k in keyStatus) delete keyStatus[k];
     timerEl.textContent = "00:00.000";
-    timerEl.classList.remove("running","locked");
-    timerDotEl.classList.remove("live");
+    timerEl.classList.remove("running","locked","copyable");
+    timerEl.removeAttribute("title");
     initBoard();
     setKeyboardDisabled(false);
     refreshKeyboardColors();
   }
 
   async function startDaily() {
-    isDailyMode = true;
     modeLabel.textContent = "Checking today's word…";
     const { word, synced, date } = await getDailyAnswer();
     target = word;
     modeLabel.textContent = synced ? "you are synced with NYT" : "you are offline (not synced with NYT)";
     dayBadge.textContent = synced ? date : `day #${dayIndex()}`;
-    practiceBtn.disabled = true;
 
     const saved = loadDailyResult();
     if (saved && saved.word === target && Array.isArray(saved.guesses) && saved.guesses.length) {
@@ -789,27 +757,16 @@ function myFunction() {
 
     gameOver = true;
     setKeyboardDisabled(true);
-    timerEl.textContent = formatTime(record.elapsedMs);
+    finalTimeText = formatTime(record.elapsedMs);
+    timerEl.textContent = finalTimeText;
+    timerEl.classList.add("copyable");
+    timerEl.title = "click to copy your time";
 
     if (record.isWin) {
-      if (bestTimeMs === null || record.elapsedMs < bestTimeMs) {
-        bestTimeMs = record.elapsedMs;
-        bestTimeEl.textContent = `best: ${formatTime(bestTimeMs)}`;
-      }
       setMessage(`your time today was ${formatTime(record.elapsedMs)}. come back tomorrow!`, "win");
     } else {
       setMessage(`you flopped today; the word was ${target} — ${formatTime(record.elapsedMs)}.`, "lose");
     }
-    practiceBtn.disabled = false;
-  }
-
-  function startPractice() {
-    isDailyMode = false;
-    target = getPracticeAnswer();
-    modeLabel.textContent = "practice round";
-    dayBadge.textContent = "unlimited";
-    setMessage("type your first letter to start the clock.");
-    resetRoundState();
   }
 
   document.addEventListener("keydown", (e) => {
@@ -819,7 +776,7 @@ function myFunction() {
     else if (/^[a-zA-Z]$/.test(e.key)) handleKey(e.key);
   });
 
-  practiceBtn.addEventListener("click", startPractice);
+  timerEl.addEventListener("click", copyTimerText);
 
   getPlayerId();
   initKeyboard();

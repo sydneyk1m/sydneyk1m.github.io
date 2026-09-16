@@ -392,7 +392,47 @@ function myFunction() {
   let rafId = null;
   let bestTimeMs = null;
   let isDailyMode = true;
+  let guessHistory = [];
   const keyStatus = {};
+
+  // ---------------------------- persistence (per-browser, not per-person) ----------------------------
+  // localStorage only identifies *this browser*, not a real person — clearing storage, incognito,
+  // or a different device all reset it. good enough to stop casual same-browser replay of today's
+  // word; a future leaderboard would need this same playerId submitted to a real backend.
+  const STORAGE_KEY_PLAYER = "pichordle_player_id";
+  const STORAGE_KEY_DAILY = "pichordle_daily_result";
+
+  function getPlayerId() {
+    try {
+      let id = localStorage.getItem(STORAGE_KEY_PLAYER);
+      if (!id) {
+        id = (crypto.randomUUID && crypto.randomUUID()) || `p_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        localStorage.setItem(STORAGE_KEY_PLAYER, id);
+      }
+      return id;
+    } catch (e) {
+      return null; // storage unavailable (private mode, disabled, etc.) — just skip persistence
+    }
+  }
+
+  function loadDailyResult() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_DAILY);
+      if (!raw) return null;
+      const data = JSON.parse(raw);
+      return data && data.date === todayDateStr() ? data : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveDailyResult(data) {
+    try {
+      localStorage.setItem(STORAGE_KEY_DAILY, JSON.stringify(data));
+    } catch (e) {
+      // storage unavailable; nothing to do
+    }
+  }
 
   const boardEl = document.getElementById("board");
   const keyboardEl = document.getElementById("keyboard");
@@ -611,6 +651,7 @@ function myFunction() {
 
   function submitGuess(guess) {
     const result = evaluateGuess(guess, target);
+    guessHistory.push(guess);
     animating = true;
     setMessage("");
 
@@ -649,7 +690,16 @@ function myFunction() {
             } else {
               setMessage(`too bad; today's word was ${target} — ${formatTime(elapsed)}.`, "lose");
             }
-            if (isDailyMode) practiceBtn.disabled = false;
+            if (isDailyMode) {
+              practiceBtn.disabled = false;
+              saveDailyResult({
+                date: todayDateStr(),
+                word: target,
+                guesses: guessHistory.slice(),
+                isWin,
+                elapsedMs: elapsed
+              });
+            }
           } else {
             currentRow++;
             currentCol = 0;
@@ -685,6 +735,7 @@ function myFunction() {
     gameOver = false;
     animating = false;
     startTime = null;
+    guessHistory = [];
     if (rafId !== null) cancelAnimationFrame(rafId);
     rafId = null;
     for (const k in keyStatus) delete keyStatus[k];
@@ -704,8 +755,52 @@ function myFunction() {
     modeLabel.textContent = synced ? "you are synced with NYT" : "you are offline (not synced with NYT)";
     dayBadge.textContent = synced ? date : `day #${dayIndex()}`;
     practiceBtn.disabled = true;
-    setMessage("type your first letter to start the clock.");
+
+    const saved = loadDailyResult();
+    if (saved && saved.word === target && Array.isArray(saved.guesses) && saved.guesses.length) {
+      restoreDailyResult(saved);
+    } else {
+      setMessage("type your first letter to start the clock.");
+      resetRoundState();
+    }
+  }
+
+  function restoreDailyResult(record) {
     resetRoundState();
+    const rank = { absent: 0, present: 1, correct: 2 };
+    const COLORS = { correct: "var(--green)", present: "var(--yellow)", absent: "var(--gray)" };
+
+    record.guesses.forEach((guess, r) => {
+      const result = evaluateGuess(guess, target);
+      board[r].tiles.forEach((tile, i) => {
+        tile.letter = guess[i];
+        tile.textEl.textContent = guess[i];
+        tile.el.classList.add("filled", result[i]);
+        tile.el.style.background = COLORS[result[i]];
+        tile.el.style.borderColor = COLORS[result[i]];
+        tile.el.style.color = "var(--white)";
+
+        const current = keyStatus[tile.letter];
+        if (!current || rank[result[i]] > rank[current]) keyStatus[tile.letter] = result[i];
+      });
+      currentRow = r + 1;
+    });
+    refreshKeyboardColors();
+
+    gameOver = true;
+    setKeyboardDisabled(true);
+    timerEl.textContent = formatTime(record.elapsedMs);
+
+    if (record.isWin) {
+      if (bestTimeMs === null || record.elapsedMs < bestTimeMs) {
+        bestTimeMs = record.elapsedMs;
+        bestTimeEl.textContent = `best: ${formatTime(bestTimeMs)}`;
+      }
+      setMessage(`your time today was ${formatTime(record.elapsedMs)}. come back tomorrow!`, "win");
+    } else {
+      setMessage(`you flopped today; the word was ${target} — ${formatTime(record.elapsedMs)}.`, "lose");
+    }
+    practiceBtn.disabled = false;
   }
 
   function startPractice() {
@@ -726,6 +821,7 @@ function myFunction() {
 
   practiceBtn.addEventListener("click", startPractice);
 
+  getPlayerId();
   initKeyboard();
   loadWordLists().then(startDaily);
 })();
